@@ -1,27 +1,41 @@
-//For the first call of read the cursor stat at the begining 
-//each time we read we chift the cursor
-//
-
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#define BUFFER_SIZE 8
+#define BUFFER_SIZE 16
+
+
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
+{
+	size_t	i;
+
+	i = 0;
+	while (src[i] && i + 1 < dstsize)
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	if (dstsize > 0)
+		dst[i] = '\0';
+	return (strlen(src));
+}
 char	*ft_strjoin(char const *s1, char const *s2)
 {
 	size_t	total_len;
 	char	*result;
 
-	if (!s1 || !s2)
+	if (!s1 && !s2)
 		return (NULL);
-	if (!*s1 && !*s2)
-		return (strdup(""));
+	if (!*s1)
+		return (strdup(s2));
+	if (!*s2)
+		return (strdup(s1));
 	total_len = strlen(s1) + strlen(s2) + 1;
 	result = (char *)malloc(total_len);
 	if (!result)
 		return (NULL);
-	strlcpy(result, s1, total_len);
+	ft_strlcpy(result, s1, total_len);
 	strlcat(result, s2, total_len);
 	return (result);
 }
@@ -54,9 +68,8 @@ char *set_line(char **line_buffer)
    size_t   i;
    size_t   st_lent;
    char *new_line;
-
    i = 0;
-   while ((*line_buffer)[i] != '\n')
+   while (((*line_buffer)[i] != '\n') && ((*line_buffer)[i] != '\0'))
         i++;
     result = ft_substr(*line_buffer, 0, i);
     st_lent = strlen(*line_buffer + i + 1);
@@ -78,23 +91,19 @@ char *get_the_line(int fd, char *left, char *buffer)
         check = read(fd, buffer, BUFFER_SIZE);
         if (check < 0)
             return (NULL);
-        if (check == 0)
-            return (NULL);
         buffer[check] = '\0';
         if (left == NULL)
             left = strdup("");
+        if (check == 0)
+          break;
         temp = left;
-        printf("the value of the temp :%s\n ", temp);
         left = ft_strjoin(temp, buffer);
-        printf("this is out string string : %s\n", left);
-
         free(temp);
         if (strchr(left, '\n'))
             break;
     }
-    free(buffer);
-    printf("this is the value of the final result %s\n", left);
     return (left);
+    
 }
 char *get_next_line(int fd)
 {
@@ -108,13 +117,34 @@ char *get_next_line(int fd)
     buffer = malloc(BUFFER_SIZE + 1);
     if (!buffer)
         return (NULL);
-    line = get_the_line(fd, left, buffer);
-    final = set_line(&line);
+    left = get_the_line(fd, left, buffer);
+    free(buffer);
+    if(!left)
+        return(NULL);
+    line = set_line(&left);
+    final = strdup(line);
+    free(line);
     return (final);
 }
 
 int main()
 {
     int fd = open("test.text", O_RDONLY);
-    get_next_line(fd);
+    printf("1 call = %s", get_next_line(fd));
+    // printf("_______________________\n\n");
+    // printf("2 call = %s\n", get_next_line(fd));
+    // printf("_______________________\n\n");
+    // printf("3 call = %s\n", get_next_line(fd));
+    // printf("_______________________\n\n");
+    // printf("4 call %s\n", get_next_line(fd));
+    // printf("_______________________\n\n");
+    // printf("THE main print %s\n", get_next_line(fd));
+    // printf("_______________________\n\n");
+    // printf("THE main print %s\n", get_next_line(fd));
+    // printf("_______________________\n\n");
+    // printf("THE main print %s\n", get_next_line(fd));
+    // printf("_______________________\n\n");
+    // printf("THE main print %s\n", get_next_line(fd));
+    // printf("_______________________\n\n");
+    close(fd);
 }
