@@ -1,9 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sait-nac <sait-nac@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/21 15:56:21 by sait-nac          #+#    #+#             */
+/*   Updated: 2024/11/21 15:56:22 by sait-nac         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
 # include <stdlib.h>
 # include <unistd.h>
 #include <fcntl.h>
+#ifndef BUFFER_SIZE
+#define BUFFER_SIZE 10
+#endif
 
 char *set_line(char **line_buffer);
 char *get_the_line(int fd, char *left, char *buffer);

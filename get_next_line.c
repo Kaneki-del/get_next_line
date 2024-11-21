@@ -6,7 +6,7 @@
 /*   By: sait-nac <sait-nac@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:58:34 by sait-nac          #+#    #+#             */
-/*   Updated: 2024/11/18 18:55:01 by sait-nac         ###   ########.fr       */
+/*   Updated: 2024/11/21 15:52:49 by sait-nac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
-char	*set_line(char **line_buffer)
+char	*set_line(char **left)
 {
 	char	*result;
 	size_t	i;
@@ -46,13 +46,20 @@ char	*set_line(char **line_buffer)
 	char	*new_line;
 
 	i = 0;
-	while (((*line_buffer)[i] != '\n') && ((*line_buffer)[i] != '\0'))
+	while (((*left)[i] != '\n') && ((*left)[i] != '\0'))
 		i++;
-	result = ft_substr(*line_buffer, 0, i);
-	st_lent = ft_strlen(*line_buffer + i + 1);
-	new_line = ft_substr(*line_buffer, i + 1, st_lent);
-	free(*line_buffer);
-	*line_buffer = new_line;
+	if ((*left)[i] == 0 && !(*left)[0])
+	{
+		free(*left);
+		*left = NULL;
+		return (NULL);
+	}
+	if ((*left)[i] == '\n')
+		i++;
+	result = ft_substr(*left, 0, i);
+	st_lent = ft_strlen(*left + i);
+	new_line = ft_substr(*left, i, st_lent);
+	*left = new_line;
 	return (result);
 }
 
@@ -74,6 +81,11 @@ char	*get_the_line(int fd, char *left, char *buffer)
 			break ;
 		temp = left;
 		left = ft_strjoin(temp, buffer);
+		if (!left)
+		{
+			free(temp);
+			return (NULL);
+		}
 		free(temp);
 		if (ft_strchr(left, '\n'))
 			break ;
@@ -85,25 +97,33 @@ char	*get_next_line(int fd)
 {
 	char		*buffer;
 	static char	*left;
-	char		*whole_line;
 	char		*final;
 	
-	buffer = malloc(BUFFER_SIZE + 1);
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
-    {
-        free(left);
-        free(buffer);
-        left = NULL;
-        buffer = NULL;
         return (NULL);
-    }
+	buffer = malloc(BUFFER_SIZE + 1);
 	if (!buffer)
 		return (NULL);
-	whole_line = get_the_line(fd, left, buffer);
+	left = get_the_line(fd, left, buffer);
 	free(buffer);
 	buffer = NULL;
-	if (!whole_line)
-		return (NULL);
-	left = set_line(whole_line);
-	return (whole_line);
+	final = set_line(&left);
+	return final;
 }
+// void mz()
+// {
+// 	system("leaks a.out");
+// }
+// int main()
+// {
+// 	//atexit(mz);
+// 	char *s;
+// 	int fd = open("text.text", O_RDWR);
+// 	for (int i = 0; i < 17; i++)
+// 	{
+// 		s = get_next_line(fd);
+// 		printf("%s", s);
+// 		free(s);
+// 	}
+// 	close(fd);
+// }
