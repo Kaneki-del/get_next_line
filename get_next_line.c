@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sait-nac <sait-nac@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:58:34 by sait-nac          #+#    #+#             */
-/*   Updated: 2024/11/21 15:52:49 by sait-nac         ###   ########.fr       */
+/*   Updated: 2024/11/21 17:54:09 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ char	*set_line(char **left)
 	result = ft_substr(*left, 0, i);
 	st_lent = ft_strlen(*left + i);
 	new_line = ft_substr(*left, i, st_lent);
+	free(*left);
 	*left = new_line;
 	return (result);
 }
@@ -77,6 +78,8 @@ char	*get_the_line(int fd, char *left, char *buffer)
 		buffer[check] = '\0';
 		if (left == NULL)
 			left = ft_strdup("");
+		if (!left)
+			return (NULL);
 		if (check == 0)
 			break ;
 		temp = left;
@@ -110,20 +113,4 @@ char	*get_next_line(int fd)
 	final = set_line(&left);
 	return final;
 }
-// void mz()
-// {
-// 	system("leaks a.out");
-// }
-// int main()
-// {
-// 	//atexit(mz);
-// 	char *s;
-// 	int fd = open("text.text", O_RDWR);
-// 	for (int i = 0; i < 17; i++)
-// 	{
-// 		s = get_next_line(fd);
-// 		printf("%s", s);
-// 		free(s);
-// 	}
-// 	close(fd);
-// }
+
